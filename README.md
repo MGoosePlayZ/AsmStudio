@@ -31,7 +31,7 @@ Click a file to open it. The center panel will show the file's contents & info, 
 
 ### Instruction Set
 
-The default ISA is proprietary, and has much more capabilities than normal ISA's. You can view all default instructions [here.](./INSTRUCTIONS.md)
+The default ISA is proprietary, and has much more capabilities than normal ISA's. You can view all default instructions [here.](./docs/INSTRUCTIONS.md)
 
 The program executes code by converting the assembly code into Python, then executing that code. You can edit the ISA [here.](./src/Instructions.py)
 
