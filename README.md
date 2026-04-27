@@ -3,7 +3,7 @@
 AsmStudio is an emulator and IDE 
 written entirely in Python.
 
-<img width="3970" height="2191" alt="Screenshot_20260425_162722" src="https://github.com/user-attachments/assets/e8c3ef45-8370-43b4-b70b-af454af3d707" />
+<img width="3970" height="2191" alt="Screenshot_20260427_020107" src="https://github.com/user-attachments/assets/e746a8dd-a314-4ea3-b0ef-35b1ce268094" />
 
 ---
 
