@@ -21,6 +21,8 @@
 |               `trnc A B`               | A = truncate(B)                               |
 |              `min A B C`               | A = min(B, C)                                 |
 |              `max A B C`               | A = max(B, C)                                 |
+|             `rngflt A L H`             | A = random.uniform(L, H)                      |
+|             `rngint A L H`             | A = random.randint(L, H)                      |
 |                                        |                                               |
 |              `and A B C`               | A = B & C                                     |
 |               `or A B C`               | A = B \| C                                    |
@@ -48,7 +50,7 @@
 |                                        |                                               |
 |               `cast A B`               | Convert B between string and number           |
 |               `len A B`                | A = length of string B                        |
-|            `strsub A B C D`            | A = B[C:D] (Substring)                        |
+|            `strsub A B C D`            | A = B\[C:D] (Substring)                       |
 |            `strfind A B C`             | A = index of C in B                           |
 |           `strsplit A B C D`           | Split C at index D into A and B               |
 |           `strjoin A B C D`            | A = B + D + C                                 |
@@ -60,6 +62,8 @@
 |              `isint A B`               | A = 1 if B is int, else 0                     |
 |             `isfloat A B`              | A = 1 if B is float, else 0                   |
 |              `isstr A B`               | A = 1 if B is string, else 0                  |
+|              `islist A B`              | A = 1 if B is list, else 0                    |
+|              `isarr A B`               | A = 1 if B is array, else 0                   |
 |              `isnone A B`              | A = 1 if B is None, else 0                    |
 |                                        |                                               |
 |                `jmp A`                 | Jump to A                                     |
@@ -81,6 +85,8 @@
 |                `clear`                 | Clear terminal screen                         |
 |            `draw_bg R G B`             | Fill screen with RGB color                    |
 |       `draw_rect X Y W H R G B`        | Draw colored rectangle                        |
+|        `draw_img path X Y W H`         | Draw image                                    |
+|             `draw_array A`             | Draw array                                    |
 |       `draw_circ X Y Rad R G B`        | Draw colored circle                           |
 |    `draw_line X1 Y1 X2 Y2 T R G B`     | Draw line with thickness T                    |
 |       `draw_text T X Y S R G B`        | Draw text T at (X,Y) with size S              |
@@ -111,13 +117,20 @@
 |           `arr_zeros A W H`            | A = np.zeros((W, H)),                         |
 |            `arr_ones A W H`            | A = np.ones((W, H)),                          |
 |            `arr_shape A B`             | A = np.shape(B),                              |
-|           `arr_get A B W H`            | A = B[W,H],                                   |
-|           `arr_set A W H B`            | A[W, H] = B,                                  |
+|           `arr_get A B W H`            | A = B\[W,H],                                  |
+|           `arr_set A W H B`            | A\[W, H] = B,                                 |
 |             `arr_fill A V`             | A.fill(V),                                    |
 |             `arr_sum A B`              | A = np.sum({1}),                              |
 |            `arr_mean A B C`            | A = np.mean(B, C),                            |
 |             `arr_flat A B`             | A = B.flatten(),                              |
 |          `arr_rshape A B W H`          | A = B.reshape(W, H),                          |
 |            `arr_rand A W H`            | A = np.random.rand(W, H),                     |
+|                `arr_lt`                | A = B < C                                     |
+|                `arr_gt`                | A = B > C                                     |
+|              `arr_where`               | A = np.where(B, C, D)                         |
+|             `arr_linspace`             | A = np.linspace(B, C, D)                      |
+|             `arr_meshgrid`             | A, B = np.meshgrid(C, D)                      |
+|              `arr_stack3`              | A = np.dstack((B, C, D))                      |
+|            `arr_transpose`             | A = np.transpose(B, (1,0,2))                  |
 |                                        |                                               |
 |               `copy A B`               | A = B.copy()                                  |

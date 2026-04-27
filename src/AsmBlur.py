@@ -140,7 +140,7 @@ def run(bytecode: list[str], screen: pygame.Surface, clock: pygame.time.Clock):
         'time'   : time,
         'STEPS_PER_TICK' : STEPS_PER_TICK,
         'ast'    : ast,
-        'tandom' : random,
+        'random' : random,
     }
 
     while env['running']:

@@ -20,8 +20,8 @@ SCHEMA = {
     'trnc'   : '{0} = m.trunc({1})',
     'min'    : '{0} = min({1}, {2})',
     'max'    : '{0} = max({1}, {2})',
-    'rngflt' : '{0} = uniform({1}, {2})',
-    'rngint' : '{0} = randint({1}, {2})',
+    'rngflt' : '{0} = random.uniform({1}, {2})',
+    'rngint' : '{0} = random.randint({1}, {2})',
 
     # Bitwise
     'and'    : '{0} = {1} & {2}',
@@ -67,6 +67,8 @@ SCHEMA = {
     'isfloat' : '{0} = int(isinstance({1}, float))',
     'isstr'   : '{0} = int(isinstance({1}, str))',
     'isnone'  : '{0} = int(isinstance({1}, None))',
+    'islist'  : '{0} = int(isinstance({1}, list))',
+    'isarr'   : '{0} = int(isinstance({1}, np.ndarray))',
 
     # Control flow
     'jmp' : 'pc = {0}-1',
@@ -91,6 +93,8 @@ SCHEMA = {
     'draw_bg'    : 'screen.fill(({0}, {1}, {2}))',
     'draw_rect'  : 'pygame.draw.rect(screen, ({4},{5},{6}), ({0}, {1}, {2}, {3}))',
     'draw_circ'  : 'pygame.draw.circle(screen, ({3},{4},{5}), ({0}, {1}), {2})',
+    'draw_img'   : 'screen.blit(pygame.transform.scale(pygame.image.load({0}).convert_alpha(), ({3},{4})), ({1}, {2}))',
+    'draw_array' : 'pygame.surfarray.blit_array(screen, {0})',
     'update'     : 'pygame.display.flip()',
     'get_mouse'  : '{0}, {1} = pygame.mouse.get_pos()',
     'get_click'  : '{0}, {1}, {2} = pygame.mouse.get_pressed()',
@@ -99,7 +103,7 @@ SCHEMA = {
     'draw_line'  : 'pygame.draw.line(screen, ({5},{6},{7}), ({0}, {1}), ({2}, {3}), {4})',
     'draw_text'  : 'screen.blit(pygame.font.SysFont("Arial", {3}).render(str({0}), True, ({4},{5},{6})), ({1},{2}))',
     'draw_tri'   : 'pygame.draw.polygon(screen, ({6},{7},{8}), (({0},{1}),({2},{3}),({4},{5})))',
-    'sound'      : 'import numpy as np, pygame; pygame.mixer.init() if not pygame.mixer.get_init() else None; d={2};a={3};c={4};s={5};r={6};sr=44100; t=np.linspace(0,d,int(sr*d)); sus=max(0,d-a-c-r); env=np.concatenate([np.linspace(0,1,int(sr*a)),np.linspace(1,s,int(sr*c)),np.full(int(sr*sus),s),np.linspace(s,0,int(sr*r))]); wave=((np.sin(2*np.pi*{1}*t) if {0}=="sine" else (np.sign(np.sin(2*np.pi*{1}*t)) if {0}=="square" else ((2*np.arcsin(np.sin(2*np.pi*{1}*t))/np.pi) if {0}=="triangle" else np.random.uniform(-1,1,len(t)))))*env*32767).astype(np.int16); stereo=np.column_stack((wave[:len(env)],wave[:len(env)])); pygame.sndarray.make_sound(stereo).play()',
+    'sound'      : 'pygame.mixer.init() if not pygame.mixer.get_init() else None; d={2};a={3};c={4};s={5};r={6};sr=44100; t=np.linspace(0,d,int(sr*d)); sus=max(0,d-a-c-r); env=np.concatenate([np.linspace(0,1,int(sr*a)),np.linspace(1,s,int(sr*c)),np.full(int(sr*sus),s),np.linspace(s,0,int(sr*r))]); wave=((np.sin(2*np.pi*{1}*t) if {0}=="sine" else (np.sign(np.sin(2*np.pi*{1}*t)) if {0}=="square" else ((2*np.arcsin(np.sin(2*np.pi*{1}*t))/np.pi) if {0}=="triangle" else np.random.uniform(-1,1,len(t)))))*env*32767).astype(np.int16); stereo=np.column_stack((wave[:len(env)],wave[:len(env)])); pygame.sndarray.make_sound(stereo).play()',
     'sleep'      : 'time.sleep({0})',
     'clockspeed' : 'STEPS_PER_TICK = {0}',
 
@@ -128,6 +132,13 @@ SCHEMA = {
     'arr_flat'   : '{0} = {1}.flatten()',
     'arr_rshape' : '{0} = {1}.reshape({2},{3})',
     'arr_rand'   : '{0} = np.random.rand({1},{2})',
+    'arr_lt'  : '{0} = {1} < {2}',
+    'arr_gt'  : '{0} = {1} > {2}',
+    'arr_where' : '{0} = np.where({1}, {2}, {3})',
+    'arr_linspace' : '{0} = np.linspace({1}, {2}, {3})',
+    'arr_meshgrid' : '{0}, {1} = np.meshgrid({2}, {3})',
+    'arr_stack3' : '{0} = np.dstack(({1}, {2}, {3}))',
+    'arr_transpose' : '{0} = np.transpose({1}, (1,0,2))',
 
     'copy' : '{0} = {1}.copy()',
 }
