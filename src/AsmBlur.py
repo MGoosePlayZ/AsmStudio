@@ -4,18 +4,22 @@ import shlex
 import math as m
 import sys
 import atexit
+import time
 from datetime import datetime
 from argparse import ArgumentError
 import pygame
 from pathlib import Path
 from Instructions import SCHEMA
+import numpy as np
+import ast
+import random
 
 # --- Constants & Config ---
 SCREEN_W       = 1920
 SCREEN_H       = 1080
 FPS            = 60
 STEPS_PER_TICK = 50
-REG_COUNT      = 4096
+REG_COUNT      = 8192
 
 parser = argparse.ArgumentParser()
 parser.add_argument('-f','--file', help='Selects the assembly file')
@@ -132,6 +136,11 @@ def run(bytecode: list[str], screen: pygame.Surface, clock: pygame.time.Clock):
         'screen' : screen,
         'pygame' : pygame,
         'm'      : m,
+        'np'     : np,
+        'time'   : time,
+        'STEPS_PER_TICK' : STEPS_PER_TICK,
+        'ast'    : ast,
+        'tandom' : random,
     }
 
     while env['running']:
@@ -139,7 +148,7 @@ def run(bytecode: list[str], screen: pygame.Surface, clock: pygame.time.Clock):
             if event.type == pygame.QUIT:
                 env['running'] = False
 
-        for _ in range(STEPS_PER_TICK):
+        for _ in range(int(env['STEPS_PER_TICK'])):
             pc = env['pc']
             if pc >= len(bytecode):
                 env['running'] = False
@@ -170,7 +179,7 @@ def run_assembly(file: str, verbose: bool = False, logging: bool = False):
     # Initialize Pygame
     pygame.init()
     screen = pygame.display.set_mode((SCREEN_W, SCREEN_H))
-    pygame.display.set_caption(f"Assembly VM - {file}")
+    pygame.display.set_caption(f"AsmBlur VM - {file}")
     clock = pygame.time.Clock()
 
     try:

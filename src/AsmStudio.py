@@ -387,13 +387,13 @@ class AsmHighlighter(QSyntaxHighlighter):
 
         # Control flow: call ret jeq jne jgt jlt jge jle jz jnz
         flow = (r'(?<![A-Za-z0-9_])'
-                r'(call|ret|jeq|jne|jgt|jlt|jge|jle|jz|jnz)'
+                r'(jmp|jeq|jne|jgt|jlt|jge|jle|jz|jnz)'
                 r'(?![A-Za-z0-9_])')
         self.rules.append((re.compile(flow), fmt(COLORS['accent_glow'], bold=True)))
 
         # I/O + misc: print println input clear halt --
         io_ops = (r'(?<![A-Za-z0-9_])'
-                  r'(println|print|input|clear|halt)'
+                  r'(println|print|input|clear|halt|sound|sleep|clockspeed)'
                   r'(?![A-Za-z0-9_])')
         self.rules.append((re.compile(io_ops), fmt("#7dd87d", bold=True)))
         self.rules.append((re.compile(r'(?m)^[ \t]*--[ \t]*$'), fmt(COLORS['text_dim'])))
@@ -402,26 +402,20 @@ class AsmHighlighter(QSyntaxHighlighter):
         #           draw_line draw_text draw_tri
         gfx = (r'(?<![A-Za-z0-9_])'
                r'(draw_bg|draw_rect|draw_circ|draw_line|draw_text|draw_tri|'
-               r'update|get_mouse|get_press)'
+               r'update|get_mouse|get_press|get_scroll)'
                r'(?![A-Za-z0-9_])')
         self.rules.append((re.compile(gfx), fmt("#d07af0", bold=True)))
 
         # Labels (identifier followed by colon at line start)
-        self.rules.append((re.compile(r'^[A-Za-z_][A-Za-z0-9_]*\s*:', re.MULTILINE),
+        self.rules.append((re.compile(r'^:[A-Za-z_][A-Za-z0-9_]*\s*', re.MULTILINE),
                            fmt(COLORS['accent'], bold=True)))
-
-        # Numeric literals: hex, binary, decimal
-        self.rules.append((re.compile(r'\b(0x[0-9a-fA-F]+|0b[01]+|\d+)\b'),
-                           fmt("#a8d8a8")))
 
         # String literals
         self.rules.append((re.compile(r'"[^"]*"'), fmt("#c8a070")))
         self.rules.append((re.compile(r"'[^']*'"), fmt("#c8a070")))
 
         # Comments: ; // #
-        self.rules.append((re.compile(r'(;|//).*$', re.MULTILINE),
-                           fmt(COLORS['text_dim'], italic=True)))
-        self.rules.append((re.compile(r'(?m)^[ \t]*#.*$'),
+        self.rules.append((re.compile(r'(?m)^[ \t]*--.*$'),
                            fmt(COLORS['text_dim'], italic=True)))
 
     def highlightBlock(self, text):
@@ -800,11 +794,6 @@ class AssemblyRunnerIDE(QMainWindow):
         act_save_as.triggered.connect(self._save_file_as)
         toolbar.addAction(act_save_as)
 
-        act_new = QAction("＋  New File", self)
-        act_new.setShortcut(QKeySequence("Ctrl+N"))
-        act_new.triggered.connect(self._new_file)
-        toolbar.addAction(act_new)
-
         toolbar.addSeparator()
 
         act_clear = QAction("⊘  Clear Console", self)
@@ -1145,19 +1134,12 @@ class AssemblyRunnerIDE(QMainWindow):
         act_stats.triggered.connect(self._show_file_stats)
         tools_menu.addAction(act_stats)
 
-        # Help
-        help_menu = menu.addMenu("Help")
-        act_shortcuts = QAction("Keyboard Shortcuts", self)
-        act_shortcuts.triggered.connect(self._show_shortcuts)
-        help_menu.addAction(act_shortcuts)
-
-        act_about = QAction("About", self)
-        act_about.triggered.connect(self._show_about)
-        help_menu.addAction(act_about)
-
     # ── File List Management ──────────────────
     def _refresh_file_list(self, *_):
-        prev_name = self.file_list.currentItem().text() if self.file_list.currentItem() else None
+        restore_selection = getattr(self, "_restore_selection", True)
+
+        prev_item = self.file_list.currentItem()
+        prev_name = prev_item.text() if prev_item else None
         self.file_list.clear()
 
         if not self.programs_dir.exists():
@@ -1178,7 +1160,7 @@ class AssemblyRunnerIDE(QMainWindow):
         self.prog_count_label.setText(f"{count} file{'s' if count != 1 else ''}  ")
 
         # Restore selection
-        if prev_name:
+        if restore_selection and prev_name:
             for i in range(self.file_list.count()):
                 if prev_name.strip() == self.file_list.item(i).text().strip():
                     self.file_list.setCurrentRow(i)
@@ -1561,36 +1543,6 @@ class AssemblyRunnerIDE(QMainWindow):
     # ── Status Bar ───────────────────────────
     def _update_statusbar(self, msg: str):
         self.status_label.setText(f"  {msg}")
-
-    # ── About / Shortcuts ────────────────────
-    def _show_shortcuts(self):
-        msg = """<style>
-            body { font-family: Consolas, monospace; font-size: 12px; color: #b8b0a0; }
-            td { padding: 3px 16px 3px 0; }
-            .k { color: #e8a020; }
-            .sec { color: #ffbd4a; font-weight: bold; padding-top: 8px; display: block; }
-        </style>
-        <table>
-        <tr><td colspan='2'><span class='sec'>RUNNING</span></td></tr>
-        <tr><td class='k'>F5</td><td>Run selected file</td></tr>
-        <tr><td class='k'>F6</td><td>Stop execution</td></tr>
-        <tr><td class='k'>Double-click</td><td>Run file from list</td></tr>
-        <tr><td colspan='2'><span class='sec'>EDITOR</span></td></tr>
-        <tr><td class='k'>Ctrl+S</td><td>Save</td></tr>
-        <tr><td class='k'>Ctrl+Shift+S</td><td>Save As…</td></tr>
-        <tr><td class='k'>Ctrl+N</td><td>New file</td></tr>
-        <tr><td class='k'>Ctrl+F</td><td>Find in file</td></tr>
-        <tr><td colspan='2'><span class='sec'>GENERAL</span></td></tr>
-        <tr><td class='k'>Ctrl+K</td><td>Clear console</td></tr>
-        <tr><td class='k'>Ctrl+O</td><td>Open .asm file</td></tr>
-        <tr><td class='k'>Ctrl+Q</td><td>Quit</td></tr>
-        </table>"""
-        box = QMessageBox(self)
-        box.setWindowTitle("Keyboard Shortcuts")
-        box.setTextFormat(Qt.RichText)
-        box.setText(msg)
-        box.setStyleSheet(STYLESHEET)
-        box.exec()
 
     def _show_about(self):
         QMessageBox.about(

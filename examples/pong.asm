@@ -1,3 +1,4 @@
+clockspeed 108
 -- Initialization
 print "Welcome to Pong!"
 print "Player 1: w key/s key to move"
@@ -50,9 +51,11 @@ add r2 r2 r4
 -- Wall Bounce
 jgt :bounce_bot r2 0
 set r4 10
+sound 'square' 440 0.05 0 0 1 0
 :bounce_bot
 jlt :p1_col r2 1065
 set r4 -10
+sound 'square' 440 0.05 0 0 1 0
 :p1_col
 -- Paddle 1 Collision
 jne :p2_col r1 60
@@ -60,6 +63,7 @@ jlt :p2_col r2 r5
 add r9 r5 r10
 jgt :p2_col r2 r9
 set r3 12
+sound 'square' 440 0.05 0 0 1 0
 sub r9 r2 r5
 sub r9 r9 r12
 div r4 r9 r14
@@ -70,12 +74,16 @@ jlt :score_check r2 r6
 add r9 r6 r10
 jgt :score_check r2 r9
 set r3 -12
+sound 'square' 440 0.05 0 0 1 0
 sub r9 r2 r6
 sub r9 r9 r12
 div r4 r9 r14
 :score_check
 jgt :p1_score r1 0
 add r8 r8 1
+sound 'square' 440 0.05 0 0 1 0
+sleep 0.05
+sound 'square' 660 0.05 0 0 1 0
 set r1 960 -- Respawn Ball X
 set r2 540 -- Respawn Ball Y
 set r3 12 -- Reset DX
@@ -84,6 +92,9 @@ sub r4 r4 10 -- Offset DY (-10 to 10)
 :p1_score
 jlt :render r1 1920
 add r7 r7 1
+sound 'square' 440 0.05 0 0 1 0
+sleep 0.05
+sound 'square' 660 0.05 0 0 1 0
 set r1 960 -- Respawn Ball X
 set r2 540 -- Respawn Ball Y
 set r3 -12 -- Reset DX
