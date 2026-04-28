@@ -4,8 +4,11 @@ I only know tkinter, and Pyside was the
 only one that works cross platform...
 """
 
-import sys
-import os
+import sys, os
+
+if hasattr(sys, "_MEIPASS"):
+    sys.path.append(sys._MEIPASS)
+
 import threading
 import time
 from datetime import datetime
@@ -1279,11 +1282,20 @@ class AssemblyRunnerIDE(QMainWindow):
     def _thread_run(self, path: str):
         capture = StdoutCapture(self.sig)
         try:
+            import sys, os
+
+            # 🔧 Fix PyInstaller module path
+            if hasattr(sys, "_MEIPASS"):
+                sys.path.append(sys._MEIPASS)
+
             import AsmBlur as asm_main
+
             with redirect_stdout(capture):
                 asm_main.run_assembly(path)
+
             elapsed = time.time() - self.run_start_time
             self.sig.run_done.emit(elapsed)
+
         except ImportError:
             self.sig.run_error.emit("'main' module not found. Place AsmBlur.py alongside this script.")
         except Exception as e:
