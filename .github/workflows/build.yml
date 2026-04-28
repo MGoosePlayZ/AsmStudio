@@ -20,7 +20,10 @@ jobs:
 
       - name: Build with PyInstaller
         run: |
-          pyinstaller --onefile --noconsole --hidden-import=AsmBlur src/AsmStudio.py
+          pyinstaller --onefile --noconsole \
+            --hidden-import=AsmBlur \
+            --collect-all AsmBlur \
+            AsmStudio.py
 
       - uses: actions/upload-artifact@v4
         with:
