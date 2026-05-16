@@ -23,7 +23,9 @@ You can test some example programs [here.](./examples)
 
 ### Getting Started
 
-You can install the latest version from [the releases page.](https://github.com/MGoosePlayZ/AsmStudio/releases)
+~~You can install the latest version from the releases page.~~
+
+AsmStudio no longer has any official downloads, and is no longer being maintained. You can still download the source code and run it in an IDE.
 
 Once you launch the app, open `Tools > Settings...` and select your programs path. All files in that path will show in the left panel.
 
